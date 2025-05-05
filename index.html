@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend x UI/UX - Pertemuan Terakhir</title>
+    <style>
+        /* Base styles */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background-color: #000;
+            color: #fff;
+        }
+
+        /* Page container */
+        .page-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-in-out;
+            z-index: 1;
+        }
+
+        .page-container.active {
+            opacity: 1;
+            transform: translateY(0);
+            z-index: 2;
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 10px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .page-indicator {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 100;
+        }
+
+        .page-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .page-dot.active {
+            background-color: white;
+            transform: scale(1.3);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #ff6b6b, #feca57, #1dd1a1);
+            transition: width 0.5s ease;
+        }
+
+        /* Content styles */
+        h1,
+        h2,
+        h3 {
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 700px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .emoji {
+            font-size: 2rem;
+            margin: 1rem 0;
+            display: inline-block;
+            transform: scale(0);
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 1s forwards;
+            animation-delay: 0.3s;
+        }
+
+        .slide-up {
+            animation: slideUp 1s forwards;
+            animation-delay: 0.5s;
+        }
+
+        .bounce-in {
+            animation: bounceIn 1s forwards;
+            animation-delay: 0.7s;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .highlight {
+            color: #f7a500;
+            font-weight: 600;
+        }
+
+        .shake {
+            animation: shake 0.5s forwards;
+            animation-delay: 0.3s;
+        }
+
+        /* Theme backgrounds */
+        .bg-pink {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+
+        .bg-dark {
+            background: linear-gradient(135deg, #1e272e, #2c3e50);
+        }
+
+        .bg-yellow {
+            background: linear-gradient(135deg, #feca57, #ffda79);
+            color: #2c3e50;
+        }
+
+        /* Image grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            border-radius: 10px;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .image-placeholder img {
+            width: 100%;
+            object-fit: cover;
+            object-position: center bottom;
+        }
+
+        /* Special elements */
+        .heartbeat {
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .important-date {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            transform: scale(0);
+        }
+
+        /* Improved styles for image grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            /* Reduced gap between images */
+            max-width: 90%;
+            margin: 0 auto 15px;
+            padding: 5px;
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            max-height: 40vh;
+            /* Maximum height before scrolling */
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .image-grid::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .image-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .image-grid::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .image-container {
+            position: relative;
+            height: 160px;
+            /* Reduced height for better mobile view */
+            overflow: hidden;
+            border-radius: 8px;
+            opacity: 0;
+            transform: scale(0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .image-container:hover {
+            transform: scale(0.9);
+            /* Slight zoom on hover */
+        }
+
+        /* Enhanced important date styles to ensure visibility */
+        .important-date {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px auto;
+            transform: scale(0);
+            animation: bounceIn 1s forwards;
+            animation-delay: 0.8s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            max-width: 90%;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            /* Ensure display */
+            z-index: 10;
+            /* Ensure it's above other elements */
+        }
+
+        .important-date p {
+            margin: 5px 0;
+            color: #000;
+            /* Darker text for better contrast */
+            font-weight: 500;
+            opacity: 1;
+            transform: none;
+        }
+
+        .important-date strong {
+            display: inline-block;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Animated floating elements */
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0;
+            z-index: 1;
+            animation: float 10s linear infinite;
+        }
+
+        /* Enhanced sparkle effect for important dates */
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: white;
+            opacity: 0;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            z-index: 1;
+        }
+
+        /* Confetti animation improvements */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--color);
+            opacity: 0;
+            animation: confettiFall 5s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Improved wave text animation */
+        .wave-text {
+            display: inline-block;
+        }
+
+        .wave-text span {
+            display: inline-block;
+            animation: waveEffect 1.5s ease-in-out infinite;
+            animation-delay: calc(0.08s * var(--i));
+        }
+
+        @keyframes waveEffect {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Enhanced floating animation */
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(var(--translateX), var(--translateY)) rotate(var(--rotate));
+                opacity: 0;
+            }
+        }
+
+        /* Improved sparkle animation */
+        @keyframes sparkleAnimation {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Enhanced dramatic text animation */
+        .dramatic-text {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dramatic-text.revealed {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Heartbeat animation enhancement */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.1);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Additional responsive adjustments */
+        @media (max-width: 768px) {
+            .image-grid {
+                max-height: 35vh;
+            }
+
+            .important-date {
+                padding: 12px;
+                margin: 15px auto;
+            }
+
+            .image-container {
+                height: 140px;
+            }
+
+            .page-container {
+                padding: 1.5rem;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-grid {
+                grid-template-columns: 1fr;
+                /* Single column for very small screens */
+                max-height: 40vh;
+            }
+
+            .image-container {
+                height: 130px;
+            }
+
+            .important-date {
+                padding: 10px;
+                margin: 10px auto;
+            }
+
+            .page-container {
+                padding: 1rem;
+                padding-top: 2rem;
+            }
+
+            .wave-text span {
+                animation-duration: 1.2s;
+            }
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.1);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .important-date {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .page-container {
+                padding: 1rem;
+            }
+
+            .nav-btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Progress bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Page 1 -->
+    <div class="page-container bg-pink active" id="page-1">
+        <h1 class="fade-in">Ingatkah kalian?</h1>
+        <p class="slide-up">Saat pertama kali kita bertemu...</p>
+        <span class="emoji bounce-in">💭</span>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page-container bg-pink" id="page-2">
+        <h1 class="fade-in">Saat kalian dengan semangat</h1>
+        <p class="slide-up">Mata berbinar-binar penuh harapan...</p>
+        <span class="emoji bounce-in">✨</span>
+    </div>
+
+    <!-- Page 3 -->
+    <div class="page-container bg-pink" id="page-3">
+        <h1 class="fade-in">Berjuang ingin masuk ke Divisi Frontend</h1>
+        <p class="slide-up">Begitu tekun mengerjakan tugas demi tugas...</p>
+        <span class="emoji bounce-in">💻</span>
+    </div>
+
+    <!-- Page 4 -->
+    <div class="page-container bg-pink" id="page-4">
+        <h1 class="fade-in">Kami juga senang</h1>
+        <p class="slide-up">Melihat semangat dan tekad kalian yang begitu menggebu-gebu...</p>
+        <span class="emoji bounce-in">🥰</span>
+    </div>
+
+    <!-- Page 5 -->
+    <div class="page-container bg-pink" id="page-5">
+        <h1 class="fade-in">Mengajar adik-adik yang penuh semangat</h1>
+        <div class="image-grid">
+            <div class="image-container fade-in" style="animation-delay: 0.8s;">
+                <div class="image-placeholder"><img src="./foto-pertama.jpg" alt=""></div>
+            </div>
+            <div class="image-container fade-in" style="animation-delay: 1s;">
+                <div class="image-placeholder"><img src="./foto-pertama.jpg" alt=""></div>
+            </div>
+        </div>
+        <p class="slide-up" style="animation-delay: 1.2s;">Rasanya seperti melihat versi muda kami dahulu...</p>
+    </div>
+
+    <!-- Page 6 -->
+    <div class="page-container bg-dark" id="page-6">
+        <h1 class="fade-in shake">Tapi...</h1>
+        <span class="emoji bounce-in">😔</span>
+    </div>
+
+    <!-- Page 7 -->
+    <div class="page-container bg-dark" id="page-7">
+        <h1 class="fade-in">Hari makin hari</h1>
+        <p class="slide-up">Sesuatu yang menyedihkan mulai terlihat...</p>
+        <span class="emoji bounce-in">📉</span>
+    </div>
+
+    <!-- Page 8 -->
+    <div class="page-container bg-dark" id="page-8">
+        <h1 class="fade-in">Begitu sakit rasanya hati ini</h1>
+        <p class="slide-up">Saat menunggu kalian hadir di setiap pertemuan...</p>
+        <span class="emoji bounce-in">💔</span>
+    </div>
+
+    <!-- Page 9 -->
+    <div class="page-container bg-dark" id="page-9">
+        <h1 class="fade-in">Melihat kalian datang semakin sedikit</h1>
+        <div class="image-grid">
+            <div class="image-container fade-in" style="animation-delay: 0.8s;">
+                <div class="image-placeholder"><img src="./pertemuan-satu.jpg" alt=""></div>
+            </div>
+            <div class="image-container fade-in" style="animation-delay: 1s;">
+                <div class="image-placeholder"><img src="./pertemuan-empat.jpg" alt=""></div>
+            </div>
+            <div class="image-container fade-in" style="animation-delay: 1.2s;">
+                <div class="image-placeholder"><img src="./pertemuan-lima.jpg" alt=""></div>
+            </div>
+            <div class="image-container fade-in" style="animation-delay: 1.4s;">
+                <div class="image-placeholder"><img src="./pertemuan-enam.jpg" alt=""></div>
+            </div>
+        </div>
+        <p class="slide-up" style="animation-delay: 1.6s;">Dari penuh sesak hingga tinggal beberapa orang...</p>
+    </div>
+
+    <!-- Page 10 -->
+    <div class="page-container bg-dark" id="page-10">
+        <h1 class="fade-in">Mungkin kami yang kurang bersemangat</h1>
+        <p class="slide-up">Atau kurang menarik dalam menyampaikan materi...</p>
+        <span class="emoji bounce-in">🤔</span>
+    </div>
+
+    <!-- Page 11 -->
+    <div class="page-container bg-dark" id="page-11">
+        <h1 class="fade-in shake">Atau mner daseng dan asdos yang kerap menghalangi kalian</h1>
+        <p class="slide-up">Yang membuat kalian semakin sulit untuk hadir...</p>
+        <span class="emoji bounce-in">🚧</span>
+    </div>
+
+    <!-- Page 12 -->
+    <div class="page-container bg-dark" id="page-12">
+        <h1 class="fade-in">Tapi kami tetap bersabar...</h1>
+        <p class="slide-up">Dan tetap percaya pada potensi kalian semua...</p>
+        <span class="emoji bounce-in">🙏</span>
+    </div>
+
+    <!-- Page 13 -->
+    <div class="page-container bg-yellow" id="page-13">
+        <h1 class="fade-in">Dan memberi kalian kesempatan lagi</h1>
+        <p class="slide-up">Untuk membuktikan bahwa kalian memang pantas berada di sini!</p>
+        <span class="emoji bounce-in">🌟</span>
+    </div>
+
+    <!-- Page 14 -->
+    <div class="page-container bg-yellow" id="page-14">
+        <h1 class="fade-in bounce-in">YESS ITS HEREE!</h1>
+        <span class="emoji bounce-in" style="font-size: 3rem;">🎉</span>
+        <p class="slide-up">Kesempatan yang kalian tunggu-tunggu!</p>
+    </div>
+
+    <!-- Page 15 -->
+    <div class="page-container bg-yellow" id="page-15">
+        <h1 class="fade-in heartbeat">COLLAB MEET FRONTEND X UI/UX</h1>
+        <h2 class="slide-up">Pertemuan 8 Frontend (Last Meeting)</h2>
+        <span class="emoji bounce-in">🚀</span>
+    </div>
+
+    <!-- Page 16 -->
+    <div class="page-container bg-yellow" id="page-16">
+        <h1 class="fade-in">Saatnya kenalan sama orang-orang yang <span class="shake highlight">mungkin</span> paling
+            sering bikin kita kesel <i class="shake highlight">eh maksudnya</i> paling kita sayang di proyek nanti 😄
+        </h1>
+        <p class="slide-up">Kita bakal belajar Figma dan gimana cara slicing desain dari Figma jadi antarmuka web yang
+            interaktif.</p>
+        <div class="important-date bounce-in">
+            <p><strong>🗓️ Hari Jumat 9 Mei 2025, pukul 12.30 WITA</strong></p>
+            <p><strong>📍 Creative Room</strong></p>
+        </div>
+    </div>
+
+    <!-- Page 17 -->
+    <div class="page-container bg-yellow" id="page-17">
+        <h1 class="fade-in">Tentunya kami gak akan membiarkan kalian susah sendiri</h1>
+        <p class="slide-up">Karena kami mengerti betapa sulitnya belajar hal baru...</p>
+        <span class="emoji bounce-in">🤝</span>
+    </div>
+
+    <!-- Page 18 -->
+    <div class="page-container bg-yellow" id="page-18">
+        <h1 class="fade-in">Akan dibuka Night Coding berturut-turut</h1>
+        <p class="slide-up">Untuk latihan slicing:</p>
+        <ul class="slide-up" style="list-style: none; text-align: left; margin-bottom: 20px;">
+            <li>✓ Slicing Portal Inspire</li>
+            <li>✓ Slicing contoh Design Figma</li>
+            <li>✓ Menggunakan React!</li>
+            <li>✓ Dan Tailwind!</li>
+        </ul>
+        <span class="emoji bounce-in">💯</span>
+    </div>
+
+    <!-- Page 19 -->
+    <div class="page-container bg-yellow" id="page-19">
+        <h1 class="fade-in">Dan bagi kalian yang rindu bertatap muka...</h1>
+        <p class="slide-up">Kami tahu betapa pentingnya komunikasi langsung dalam belajar...</p>
+        <span class="emoji bounce-in">👥</span>
+    </div>
+
+    <!-- Page 20 -->
+    <div class="page-container bg-yellow" id="page-20">
+        <h1 class="fade-in">Setiap hari kaka kaka FE yang paling keren ini akan siap menunggu kalian</h1>
+        <p class="slide-up">(kalo nda di CR, e-lib ato lab hehe)</p>
+        <p class="slide-up">Jangan malu untuk bertanya dan meminta bantuan ya!</p>
+        <span class="emoji bounce-in">👨‍💻👩‍💻</span>
+    </div>
+
+    <!-- Page 21 -->
+    <div class="page-container bg-yellow" id="page-21">
+        <h1 class="fade-in heartbeat">Jangan lupa save the date</h1>
+        <div class="important-date bounce-in">
+            <p><strong>🗓️ Hari Jumat 9 Mei 2025, pukul 12.30 WITA</strong></p>
+            <p><strong>📍 Creative Room</strong></p>
+        </div>
+        <h2 class="bounce-in" style="animation-delay: 1.2s; font-size: 2rem; margin-top: 1rem;">We love you guys ❤️</h2>
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" id="prev-btn">Sebelumnya</button>
+        <button class="nav-btn" id="next-btn">Selanjutnya</button>
+    </div>
+
+    <div class="page-indicator" id="page-indicator">
+        <!-- Page dots will be added by JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Variables
+            const pages = document.querySelectorAll('.page-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const pageIndicator = document.getElementById('page-indicator');
+
+            let currentPage = 0;
+            const totalPages = pages.length;
+
+            // Initialize page dots
+            function initPageDots() {
+                for (let i = 0; i < totalPages; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('page-dot');
+                    if (i === 0) dot.classList.add('active');
+                    pageIndicator.appendChild(dot);
+                }
+            }
+
+            // Update progress bar
+            function updateProgress() {
+                const progress = ((currentPage + 1) / totalPages) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+
+            // Show page
+            function showPage(index) {
+                // Hide all pages
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+
+                // Show requested page
+                pages[index].classList.add('active');
+
+                // Apply theme changes
+                if (index >= 5 && index <= 11) {
+                    document.body.style.backgroundColor = '#1e272e';
+                } else if (index >= 12) {
+                    document.body.style.backgroundColor = '#feca57';
+                } else {
+                    document.body.style.backgroundColor = '#ff6b6b';
+                }
+
+                // Update page dots
+                const dots = document.querySelectorAll('.page-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+
+                // Animate elements within the page
+                const animElements = pages[index].querySelectorAll('.fade-in, .slide-up, .bounce-in, .image-container');
+                animElements.forEach(el => {
+                    // Reset animations
+                    el.style.animation = 'none';
+                    el.offsetHeight; // Trigger reflow
+
+                    // Re-apply animation class
+                    if (el.classList.contains('fade-in')) {
+                        el.style.animation = 'fadeIn 1s forwards';
+                    } else if (el.classList.contains('slide-up')) {
+                        el.style.animation = 'slideUp 1s forwards';
+                    } else if (el.classList.contains('bounce-in')) {
+                        el.style.animation = 'bounceIn 1s forwards';
+                    } else if (el.classList.contains('image-container')) {
+                        el.style.opacity = '0';
+                        setTimeout(() => {
+                            el.style.opacity = '1';
+                            el.style.transform = 'scale(1)';
+                            el.style.transition = 'all 0.5s ease-in-out';
+                        }, parseInt(el.style.animationDelay || '800ms'));
+                    }
+                });
+
+                // Update progress
+                updateProgress();
+            }
+
+            // Go to previous page
+            function prevPage() {
+                if (currentPage > 0) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
+            }
+
+            // Go to next page
+            function nextPage() {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            }
+
+            // Navigate to specific page by dot
+            function goToPage(index) {
+                currentPage = index;
+                showPage(currentPage);
+            }
+
+            // Event listeners
+            prevBtn.addEventListener('click', prevPage);
+            nextBtn.addEventListener('click', nextPage);
+
+            // Click anywhere to go next
+            document.body.addEventListener('click', function (event) {
+                // Ignore clicks on buttons
+                if (event.target.tagName === 'BUTTON') return;
+
+                // Calculate which half of the screen was clicked
+                const halfWidth = window.innerWidth / 2;
+                if (event.clientX < halfWidth) {
+                    prevPage();
+                } else {
+                    nextPage();
+                }
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'ArrowLeft') {
+                    prevPage();
+                } else if (event.key === 'ArrowRight' || event.key === 'Space') {
+                    nextPage();
+                }
+            });
+
+            // Click on page dots
+            pageIndicator.addEventListener('click', function (event) {
+                if (event.target.classList.contains('page-dot')) {
+                    const dots = Array.from(document.querySelectorAll('.page-dot'));
+                    const index = dots.indexOf(event.target);
+                    goToPage(index);
+                }
+            });
+
+            // Initialize
+            initPageDots();
+            showPage(0);
+            updateProgress();
+
+            // Add swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                if (touchEndX < touchStartX - swipeThreshold) {
+                    // Swiped left
+                    nextPage();
+                } else if (touchEndX > touchStartX + swipeThreshold) {
+                    // Swiped right
+                    prevPage();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
